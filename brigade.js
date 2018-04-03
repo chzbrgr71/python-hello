@@ -50,7 +50,7 @@ function acrBuildJobRunner(config, d) {
         `az login --service-principal -u ${config.get("azServicePrincipal")} -p ${config.get("azClientSecret")} --tenant ${config.get("azTenant")}`,
         //`az account list`,
         //`az acr list -o table`
-        `az acr build -t ${config.get("acrImage")}:${config.get("imageTag")} -f ./Dockerfile --context . -r ${config.get("acrUsername")}`
+        `az acr build -t ${config.get("image")}:${config.get("imageTag")} -f ./Dockerfile --context . -r ${config.get("acrUsername")}`
     ]
 }
 
