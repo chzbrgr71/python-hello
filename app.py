@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.get('/')
 def get_root(): 
-    return "Hello from Brian Redmond!"
+    return "Hello from Brian Redmond v1.0"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=port)
