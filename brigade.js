@@ -46,8 +46,7 @@ function acrBuildJobRunner(config, d) {
     d.image = "chzbrgr71/azure-cli"
     d.privileged = true
     d.tasks = [
-        `cd /src`,
-        `ls -la`,
+        `pwd`,
         `az login --service-principal -u ${config.get("azServicePrincipal")} -p ${config.get("azClientSecret")} --tenant ${config.get("azTenant")}`,
         //`az account list`,
         //`az acr list -o table`
