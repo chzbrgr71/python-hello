@@ -8,6 +8,9 @@ events.on("push", (brigadeEvent, project) => {
     brigConfig.set("acrServer", project.secrets.acrServer)
     brigConfig.set("acrUsername", project.secrets.acrUsername)
     brigConfig.set("acrPassword", project.secrets.acrPassword)
+    brigConfig.set("azServicePrincipal", project.secrets.azServicePrincipal)
+    brigConfig.set("azClientSecret", project.secrets.azClientSecret)
+    brigConfig.set("azTenant", project.secrets.azTenant)
     brigConfig.set("image", "chzbrgr71/python-hello")
     brigConfig.set("gitSHA", brigadeEvent.revision.commit.substr(0,7))
     brigConfig.set("eventType", brigadeEvent.type)
@@ -16,15 +19,15 @@ events.on("push", (brigadeEvent, project) => {
     brigConfig.set("acrImage", `${brigConfig.get("acrServer")}/${brigConfig.get("image")}`)
     
     console.log(`==> gitHub webook (${brigConfig.get("branch")}) with commit ID ${brigConfig.get("gitSHA")}`)
-    
+    console.log(brigConfig.get("azServicePrincipal"))
+    console.log(brigConfig.get("azClientSecret"))
+    console.log(brigConfig.get("azTenant"))
+
     // setup brigade jobs
     var acrBuilder = new Job("job-runner-acr-builder")
     //var k8s = new Job("job-runner-k8s")
     acrBuildJobRunner(brigConfig, acrBuilder)
     //kubeJobRunner(brigConfig, k8s)
-    
-    // start pipeline
-    console.log(`==> starting pipeline for docker image: ${brigConfig.get("webACRImage")}:${brigConfig.get("imageTag")}`)
     
     var pipeline = new Group()
     pipeline.add(acrBuilder)
@@ -45,13 +48,13 @@ function acrBuildJobRunner(config, d) {
     d.image = "chzbrgr71/azure-cli"
     d.privileged = true
     d.tasks = [
-        "az acr build --help"
-        //"cd /src/app/web",
+        "az acr list -o table",
+        "cd /src",
+        "ls -la"
         //`docker login ${config.get("acrServer")} -u ${config.get("acrUsername")} -p ${config.get("acrPassword")}`,
         //`docker build --build-arg BUILD_DATE='1/1/2017 5:00' --build-arg IMAGE_TAG_REF=${config.get("imageTag")} --build-arg VCS_REF=${config.get("gitSHA")} -t ${config.get("webImage")} .`,
         //`docker tag ${config.get("webImage")} ${config.get("webACRImage")}:${config.get("imageTag")}`,
-        //`docker push ${config.get("webACRImage")}:${config.get("imageTag")}`,
-        //"killall dockerd"
+        //`docker push ${config.get("webACRImage")}:${config.get("imageTag")}`
     ]
 }
 
