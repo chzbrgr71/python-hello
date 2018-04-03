@@ -46,11 +46,11 @@ function acrBuildJobRunner(config, d) {
     d.image = "chzbrgr71/azure-cli"
     d.privileged = true
     d.tasks = [
-        `pwd`,
+        `cd /src/app`,
         `az login --service-principal -u ${config.get("azServicePrincipal")} -p ${config.get("azClientSecret")} --tenant ${config.get("azTenant")}`,
         //`az account list`,
         //`az acr list -o table`
-        `az acr build -t ${config.get("acrImage")}:${config.get("imageTag")} -f ./app/Dockerfile --context ./app -r ${config.get("acrUsername")}`
+        `az acr build -t ${config.get("acrImage")}:${config.get("imageTag")} -f ./Dockerfile --context . -r ${config.get("acrUsername")}`
     ]
 }
 
