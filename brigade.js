@@ -48,9 +48,10 @@ function acrBuildJobRunner(config, d) {
     d.image = "chzbrgr71/azure-cli"
     d.privileged = true
     d.tasks = [
-        "az acr list -o table",
-        "cd /src",
-        "ls -la"
+        `cd /src`,
+        `az login --service-principal -u ${config.get("azServicePrincipal")} -p ${config.get("azClientSecret")} --tenant ${config.get("azTenant")}`,
+        `az account list`,
+        `az acr list -o table`
         //`docker login ${config.get("acrServer")} -u ${config.get("acrUsername")} -p ${config.get("acrPassword")}`,
         //`docker build --build-arg BUILD_DATE='1/1/2017 5:00' --build-arg IMAGE_TAG_REF=${config.get("imageTag")} --build-arg VCS_REF=${config.get("gitSHA")} -t ${config.get("webImage")} .`,
         //`docker tag ${config.get("webImage")} ${config.get("webACRImage")}:${config.get("imageTag")}`,
