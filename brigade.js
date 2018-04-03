@@ -19,9 +19,7 @@ events.on("push", (brigadeEvent, project) => {
     brigConfig.set("acrImage", `${brigConfig.get("acrServer")}/${brigConfig.get("image")}`)
     
     console.log(`==> gitHub webook (${brigConfig.get("branch")}) with commit ID ${brigConfig.get("gitSHA")}`)
-    console.log(brigConfig.get("azServicePrincipal"))
-    console.log(brigConfig.get("azClientSecret"))
-    console.log(brigConfig.get("azTenant"))
+    console.log(`==> logging into Azure with ${brigConfig.get("azServicePrincipal")}`)
 
     // setup brigade jobs
     var acrBuilder = new Job("job-runner-acr-builder")
@@ -50,12 +48,9 @@ function acrBuildJobRunner(config, d) {
     d.tasks = [
         `cd /src`,
         `az login --service-principal -u ${config.get("azServicePrincipal")} -p ${config.get("azClientSecret")} --tenant ${config.get("azTenant")}`,
-        `az account list`,
-        `az acr list -o table`
-        //`docker login ${config.get("acrServer")} -u ${config.get("acrUsername")} -p ${config.get("acrPassword")}`,
-        //`docker build --build-arg BUILD_DATE='1/1/2017 5:00' --build-arg IMAGE_TAG_REF=${config.get("imageTag")} --build-arg VCS_REF=${config.get("gitSHA")} -t ${config.get("webImage")} .`,
-        //`docker tag ${config.get("webImage")} ${config.get("webACRImage")}:${config.get("imageTag")}`,
-        //`docker push ${config.get("webACRImage")}:${config.get("imageTag")}`
+        //`az account list`,
+        //`az acr list -o table`
+        `az acr build -t ${config.get("acrImage")}:${config.get("imageTag")} -f ./app/Dockerfile --context ./app -r ${config.get("acrUsername")}`
     ]
 }
 
